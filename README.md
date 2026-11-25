@@ -1,6 +1,10 @@
 # Daydreams Night
 
-A Y2K-inspired dark theme for Claude Code in the desktop app: a fine lilac grid, a few four-pointed stars, pink bubbles for your messages, calm cards for Claude's replies, and a framed pixel loader in lime, aqua, lilac and pink.
+A dreamy pixel-art night theme for Claude Code in the desktop app. Midnight blue-violet with a fine lilac grid, a few twinkling stars, pink bubbles for your messages, calm cards for Claude's replies, and a framed pixel loader that fills up in lime, aqua, lilac and pink.
+
+![Illustrated preview of Daydreams Night](assets/preview.png)
+
+*Illustration made from the theme's own colors and loader; the app may look slightly different.*
 
 ## Install
 
@@ -73,4 +77,4 @@ This is an independent project and not an official Anthropic product.
 
 ## Deutsch
 
-Ein von Y2K inspiriertes Nacht-Theme für Claude Code in der Desktop-App. Installieren: **+** neben dem Eingabefeld, **Plugins**, **Add marketplace**, `desireedaydreams/daydreams-night`, dann **Add plugin**. Der Mod liest und sendet keine Daten.
+Ein verträumtes Pixel-Nacht-Theme für Claude Code in der Desktop-App: Lila-Raster, funkelnde Sterne, rosa Bubbles und ein bunter Pixel-Ladebalken. Installieren: **+** neben dem Eingabefeld, **Plugins**, **Add marketplace**, `desireedaydreams/daydreams-night`, dann **Add plugin**. Der Mod liest und sendet keine Daten.

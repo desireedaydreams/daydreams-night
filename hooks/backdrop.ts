@@ -1,8 +1,8 @@
-// Hintergrund auf der Grafikkarte: 32-Punkt-Raster und vier Sterne, jedes Bild neu
-// in echten Punkten gezeichnet. So streckt sich beim Ändern der Fenstergröße nichts.
+// The backdrop on the GPU: a 32-point grid and four stars, drawn in real points
+// every frame, so nothing stretches while the window is resized.
 import { abs, cos, max, mix, picture, shader, size, smoothstep, sqrt, step, time, vec2, vec3, vec4 } from 'claude-code/shader'
 
-// Deckkraft eines vierzackigen Sterns um `at`, Radius `r` in Punkten
+// Opacity of a four-pointed star around `at`, radius `r` in points
 function star(point: vec2, at: vec2, r: number, px: number, delay: number): number {
   const d = vec2(abs(point - at) / r)
   const edge = sqrt(d.x) + sqrt(d.y)
@@ -12,7 +12,7 @@ function star(point: vec2, at: vec2, r: number, px: number, delay: number): numb
 }
 
 const sky = picture(p => {
-  // y zählt von unten, das Raster beginnt oben links
+  // y counts from the bottom, the grid starts at the top left
   const at = vec2(p.point.x, size.y - p.point.y)
   const gx = at.x % 32
   const gy = at.y % 32

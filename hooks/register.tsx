@@ -11,22 +11,11 @@ const LIME = '#C6FF3D'
 const LILAC = '#B9A6FF'
 const NIGHT = '#120E24'
 
-// ── Farben der App, fest im Nacht-Modus (die helle Palette bleibt ungenutzt) ────────────────────────────
+// ── App colors, night mode only ─────────────────────────────────────────────
 const { theme, problems } = makeColors({
   label: 'Daydreams Night',
-  roles: { accent: BUBBLEGUM, danger: '#E0245E', success: '#6CC21F', warning: '#E0A100', pro: '#8F7BFF' },
-  light: {
-    gray: {
-      anchors: {
-        'surface-0': '#EDE8FF',
-        'surface-1': ICE,
-        'surface-2': '#FBFAFF',
-        'text-primary': MIDNIGHT,
-        'text-secondary': '#3A3158',
-        'text-muted': '#564D78',
-      },
-    },
-  },
+  only: 'dark',
+  roles: { accent: BUBBLEGUM, danger: { seed: '#E0245E', fillShade: 500 }, success: '#6CC21F', warning: '#E0A100', pro: '#8F7BFF' },
   dark: {
     gray: {
       anchors: {
@@ -39,18 +28,18 @@ const { theme, problems } = makeColors({
         'text-muted': '#C4BEDD',
       },
     },
+    git: { removed: '#FF6159', closed: '#FF6F66' },
   },
 })
 
 const BASE: ThemeSetArgs = {
   colors: theme,
-  // Fast klares Glas, damit Raster und Sterne durchscheinen
-  backdrop: { scene: 'y2k-grid', glass: { blur: 0, tint: NIGHT, opacity: 0.25 } },
+  // Almost clear glass, so the grid and stars show through
+  backdrop: { scene: 'daydreams-night', glass: { blur: 0, tint: NIGHT, opacity: 0.25 } },
   overrideColorScheme: 'dark',
 }
 
-// Werte aus dem Moodboard (Tafel Chat, Nacht). Die Flächen sind deckend,
-// damit der Text über dem Raster lesbar bleibt.
+// The fills are opaque, so text stays readable over the grid.
 const LOOK: ThemeSetArgs = {
   ...BASE,
   style: {
@@ -78,12 +67,12 @@ const LOOK: ThemeSetArgs = {
   },
 }
 
-// ── Deko: 4-zackiger Stern ─────────────────────────────────────────────────
-// Pfad aus dem Moodboard, 24×24
+// ── Four-pointed star ─────────────────────────────────────────────────
+// Path in a 24×24 box
 const STAR = 'M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z'
 
-// ── Hintergrund: 32-px-Lila-Raster, ein paar Sterne am Rand ───────────────
-// Abstand zum Rand, damit die Sterne auch in schmalen und flachen Fenstern sichtbar bleiben.
+// ── Backdrop: lilac grid, a few stars near the edges ───────────────
+// Kept away from the edges, so narrow and flat windows still show them.
 const W = 1600
 const H = 1000
 const stars = [
@@ -97,7 +86,7 @@ const gridLines = (end: number, line: (n: number) => string) =>
   Array.from({ length: Math.floor(end / 32) + 1 }, (_, i) => line(i * 32)).join('')
 const GRID = gridLines(W, x => `M${x} 0V${H}`) + gridLines(H, y => `M0 ${y}H${W}`)
 
-// Ersatz, wo der Shader (backdrop.ts) nicht läuft. Feste Zeichenfläche mit slice: wächst beim Ändern der Fenstergröße stufenlos mit.
+// Stands in where the shader (backdrop.ts) does not run. Fixed canvas with slice, so it scales with the window.
 const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">
 <style>
 .st{animation:tw 7s ease-in-out infinite}
@@ -108,7 +97,7 @@ const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" p
 ${stars.map(s => `<g transform="translate(${s.x} ${s.y}) scale(${s.size / 24})"><path class="st" style="animation-delay:-${s.d}s" fill="${s.c}" d="${STAR}"/></g>`).join('')}
 </svg>`
 
-// ── Pixel-Schrift (3×5) für Labels und Status ─────────────────────────────
+// ── Pixel font (3×5) for the loader labels ─────────────────────────────
 const FONT: Record<string, string> = {
   A: '010101111101101', B: '110101110101110', C: '011100100100011', D: '110101101101110',
   E: '111100110100111', G: '011100101101011', H: '101101111101101', I: '111010010010111',
@@ -142,9 +131,9 @@ const pixelPath = (text: string, x: number, y: number, px: number) => {
 const pixelWidth = (text: string, px: number) =>
   [...text.toUpperCase()].reduce((w, ch) => w + ((glyph(ch)[0] ?? '').length + 1) * px, 0) - px
 
-// ── Pixel-Ladebalken ──────────────────────────────────────────────────────
+// ── Pixel loader ──────────────────────────────────────────────────────
 const CELLS = 12
-// Leere Kästchen: alle gleich, Lilac mit 18 % auf Night
+// Unlit cells share one color: lilac at 18 % over night
 const CELL_OFF = '#302A4B'
 const CELL_COLORS = [LIME, AQUA, LILAC, BUBBLEGUM]
 const LABELS: Record<string, string> = {
@@ -185,7 +174,7 @@ export const register: Register = on => {
     try {
       set = await $.theme.set(LOOK)
     } catch (error) {
-      // Ältere Versionen kennen style noch nicht
+      // Older versions do not know style
       $.ui.log(String(error))
       set = await $.theme.set(BASE)
     }
@@ -195,7 +184,7 @@ export const register: Register = on => {
     return next(e)
   })
 
-  // Hintergrund
+  // Backdrop
   on('ui.render', { component: 'Backdrop' }, async ($, e, next) => {
     if (e.surface !== 'desktop' && e.surface !== 'mobile') {
       return next(e)
@@ -208,7 +197,7 @@ export const register: Register = on => {
     )
   })
 
-  // Pixel-Ladebalken beim Nachdenken
+  // Pixel loader while Claude works
   on('ui.render', { component: 'Spinner' }, async ($, e, next) => {
     if (e.surface !== 'desktop') {
       return next(e)
