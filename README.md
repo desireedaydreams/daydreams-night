@@ -31,3 +31,7 @@ claude plugin install y2k-night --marketplace desireedaydreams/y2k-night
 | Aqua | `#6FE7FF` |
 | Lime | `#C6FF3D` |
 | Lilac | `#B9A6FF` |
+
+## Lizenz
+
+[MIT](LICENSE). Ausgenommen sind `hooks/make-colors.js` und `hooks/make-colors.d.ts`: Sie stammen unverändert aus der Mod-Vorlage von Claude Code (Anthropic) und fallen nicht unter diese Lizenz.
