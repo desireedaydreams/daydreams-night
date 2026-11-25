@@ -97,7 +97,7 @@ const gridLines = (end: number, line: (n: number) => string) =>
   Array.from({ length: Math.floor(end / 32) + 1 }, (_, i) => line(i * 32)).join('')
 const GRID = gridLines(W, x => `M${x} 0V${H}`) + gridLines(H, y => `M0 ${y}H${W}`)
 
-// Feste Zeichenfläche mit slice: wächst beim Ändern der Fenstergröße stufenlos mit.
+// Ersatz, wo der Shader (backdrop.ts) nicht läuft. Feste Zeichenfläche mit slice: wächst beim Ändern der Fenstergröße stufenlos mit.
 const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">
 <style>
 .st{animation:tw 7s ease-in-out infinite}
@@ -200,8 +200,12 @@ export const register: Register = on => {
     if (e.surface !== 'desktop' && e.surface !== 'mobile') {
       return next(e)
     }
-    const { Svg } = $.ui.resolve(e)
-    return <Svg source={SCENE} alt="Feines lila Raster mit ein paar Sternen" />
+    const { Shader, Svg } = $.ui.resolve(e)
+    return (
+      <Shader module="./backdrop.ts">
+        <Svg source={SCENE} alt="Fine lilac grid with a few stars" />
+      </Shader>
+    )
   })
 
   // Pixel-Ladebalken beim Nachdenken
