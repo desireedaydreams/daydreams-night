@@ -1,6 +1,6 @@
 import type { Register, ThemeSetArgs } from 'claude-code'
 
-import { makeColors } from './make-colors.js'
+import { theme } from './palette'
 
 // ── Palette ────────────────────────────────────────────────────────────────
 const MIDNIGHT = '#1B1530'
@@ -10,27 +10,6 @@ const AQUA = '#6FE7FF'
 const LIME = '#C6FF3D'
 const LILAC = '#B9A6FF'
 const NIGHT = '#120E24'
-
-// ── App colors, night mode only ─────────────────────────────────────────────
-const { theme, problems } = makeColors({
-  label: 'Daydreams Night',
-  only: 'dark',
-  roles: { accent: BUBBLEGUM, danger: { seed: '#E0245E', fillShade: 500 }, success: '#6CC21F', warning: '#E0A100', pro: '#8F7BFF' },
-  dark: {
-    gray: {
-      anchors: {
-        'surface-0': NIGHT,
-        'surface-1': '#1B1530',
-        'surface-2': '#201B33',
-        'surface-3': '#231F33',
-        'text-primary': ICE,
-        'text-secondary': '#D8D3EC',
-        'text-muted': '#C4BEDD',
-      },
-    },
-    git: { removed: '#FF6159', closed: '#FF6F66' },
-  },
-})
 
 const BASE: ThemeSetArgs = {
   colors: theme,
@@ -166,10 +145,6 @@ ${cells}
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    const unpainted = problems.find(line => line.startsWith("Desktop won't paint"))
-    if (unpainted !== undefined) {
-      $.ui.toast(unpainted)
-    }
     let set
     try {
       set = await $.theme.set(LOOK)

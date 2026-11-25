@@ -34,7 +34,7 @@ The theme applies by itself when a session starts. There are no commands and no 
 
 - One hooks module, `hooks/register.tsx`. It sets the theme when a session starts and draws two things: the backdrop and the loader. The backdrop is a small shader, `hooks/backdrop.ts`, that runs on the GPU; where it cannot run, a drawing takes its place.
 - It sends nothing, fetches nothing, and does not read or store your messages or files. It changes no tool calls and no permissions.
-- `hooks/make-colors.js` is an unchanged copy of the color helper from Claude Code's mod template. It works out the palette and checks contrast.
+- `hooks/palette.ts` is a plain list of the theme's colors.
 
 ## Good to know
 
@@ -71,7 +71,7 @@ Found a problem? [Open an issue](https://github.com/desireedaydreams/daydreams-n
 
 ## License
 
-[MIT](LICENSE), except `hooks/make-colors.js` and `hooks/make-colors.d.ts`. Both come unchanged from Claude Code's mod template (Anthropic) and are not covered by this license.
+[MIT](LICENSE)
 
 This is an independent project and not an official Anthropic product.
 
