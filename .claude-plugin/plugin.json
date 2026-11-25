@@ -1,5 +1,11 @@
 {
   "name": "daydreams-night",
-  "version": "0.5.0",
-  "description": "Y2K-Theme im Nacht-Modus: Lila-Raster, Sterne, rosa Bubbles, Pixel-Ladebalken"
+  "version": "0.6.1",
+  "description": "Y2K-inspired dark theme for the desktop app: lilac grid, stars, pink bubbles and a pixel loader",
+  "author": {
+    "name": "desireedaydreams"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/desireedaydreams/daydreams-night",
+  "icon": "./.claude-plugin/icon.png"
 }

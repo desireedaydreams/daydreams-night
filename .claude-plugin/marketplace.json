@@ -1,5 +1,13 @@
 {
   "name": "daydreams-night",
-  "owner": { "name": "desireedaydreams" },
-  "plugins": [{ "name": "daydreams-night", "source": "./" }]
+  "owner": {
+    "name": "desireedaydreams"
+  },
+  "plugins": [
+    {
+      "name": "daydreams-night",
+      "source": "./"
+    }
+  ],
+  "description": "Daydreams Night: a Y2K-inspired dark theme for Claude Code"
 }

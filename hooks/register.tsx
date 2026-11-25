@@ -83,24 +83,29 @@ const LOOK: ThemeSetArgs = {
 const STAR = 'M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z'
 
 // ── Hintergrund: 32-px-Lila-Raster, ein paar Sterne am Rand ───────────────
-// Ecke in Prozent, Abstand davon in echten px: so schneidet kein Fenster sie ab.
+// Abstand zum Rand, damit die Sterne auch in schmalen und flachen Fenstern sichtbar bleiben.
+const W = 1600
+const H = 1000
 const stars = [
-  { ax: '100%', ay: '0%', dx: -92, dy: 72, size: 28, c: BUBBLEGUM, d: 0 },
-  { ax: '100%', ay: '0%', dx: -46, dy: 122, size: 16, c: LIME, d: 2 },
-  { ax: '0%', ay: '0%', dx: 28, dy: 84, size: 22, c: AQUA, d: 4 },
-  { ax: '100%', ay: '100%', dx: -56, dy: -230, size: 18, c: '#FFFFFF', d: 1 },
+  { x: 1330, y: 150, size: 28, c: BUBBLEGUM, d: 0 },
+  { x: 1385, y: 205, size: 16, c: LIME, d: 2 },
+  { x: 190, y: 165, size: 22, c: AQUA, d: 4 },
+  { x: 1375, y: 760, size: 18, c: '#FFFFFF', d: 1 },
 ]
 
-// Ohne viewBox: 1 Einheit = 1 px, das Raster bleibt 32 px und füllt jedes Fenster.
-const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+const gridLines = (end: number, line: (n: number) => string) =>
+  Array.from({ length: Math.floor(end / 32) + 1 }, (_, i) => line(i * 32)).join('')
+const GRID = gridLines(W, x => `M${x} 0V${H}`) + gridLines(H, y => `M0 ${y}H${W}`)
+
+// Feste Zeichenfläche mit slice: wächst beim Ändern der Fenstergröße stufenlos mit.
+const SCENE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">
 <style>
 .st{animation:tw 7s ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:1}50%{opacity:.5}}
 </style>
-<defs><pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="${LILAC}" stroke-opacity=".22" stroke-width="1"/></pattern></defs>
-<rect width="100%" height="100%" fill="${NIGHT}"/>
-<rect width="100%" height="100%" fill="url(#g)"/>
-${stars.map(s => `<svg x="${s.ax}" y="${s.ay}" width="1" height="1" overflow="visible"><g transform="translate(${s.dx} ${s.dy}) scale(${s.size / 24})"><path class="st" style="animation-delay:-${s.d}s" fill="${s.c}" d="${STAR}"/></g></svg>`).join('')}
+<rect width="${W}" height="${H}" fill="${NIGHT}"/>
+<path d="${GRID}" fill="none" stroke="${LILAC}" stroke-opacity=".22" stroke-width="1" vector-effect="non-scaling-stroke"/>
+${stars.map(s => `<g transform="translate(${s.x} ${s.y}) scale(${s.size / 24})"><path class="st" style="animation-delay:-${s.d}s" fill="${s.c}" d="${STAR}"/></g>`).join('')}
 </svg>`
 
 // ── Pixel-Schrift (3×5) für Labels und Status ─────────────────────────────
@@ -109,7 +114,7 @@ const FONT: Record<string, string> = {
   E: '111100110100111', G: '011100101101011', H: '101101111101101', I: '111010010010111',
   K: '101101110101101', L: '100100100100111', M: '10001|11011|10101|10001|10001', N: '1001|1101|1011|1001|1001',
   O: '010101101101010', P: '110101110100100', R: '110101110101101', S: '011100010001110',
-  T: '111010010010010', U: '101101101101111', W: '101101101111101', X: '101101010101101',
+  T: '111010010010010', U: '101101101101111', W: '10001|10001|10101|11011|10001', X: '101101010101101',
   Y: '101101010010010', '.': '000000000000010', ' ': '000000000000000',
 }
 
@@ -139,8 +144,11 @@ const pixelWidth = (text: string, px: number) =>
 
 // ── Pixel-Ladebalken ──────────────────────────────────────────────────────
 const CELLS = 12
+// Leere Kästchen: alle gleich, Lilac mit 18 % auf Night
+const CELL_OFF = '#302A4B'
+const CELL_COLORS = [LIME, AQUA, LILAC, BUBBLEGUM]
 const LABELS: Record<string, string> = {
-  thinking: 'DENKT NACH', requesting: 'SENDET', responding: 'SCHREIBT', 'tool-use': 'ARBEITET', 'tool-input': 'ARBEITET',
+  thinking: 'THINKING', requesting: 'SENDING', responding: 'WRITING', 'tool-use': 'WORKING', 'tool-input': 'WORKING',
 }
 
 const loader = (label: string) => {
@@ -149,15 +157,19 @@ const loader = (label: string) => {
   const barW = CELLS * (cell + gap) + gap
   const w = barW + 14 + pixelWidth(label, 2)
   const cells = Array.from({ length: CELLS }, (_, i) =>
-    `<rect class="c" style="animation-delay:${(i * 0.12).toFixed(2)}s" x="${gap + i * (cell + gap) + 2}" y="5" width="${cell}" height="${cell}" fill="${i < CELLS / 2 ? LILAC : AQUA}"/>`,
+    `<rect class="c" style="animation-delay:${(i * 0.12).toFixed(2)}s" x="${gap + i * (cell + gap) + 2}" y="5" width="${cell}" height="${cell}" fill="${CELL_COLORS[Math.floor((i * CELL_COLORS.length) / CELLS)]}"/>`,
+  ).join('')
+  const off = Array.from({ length: CELLS }, (_, i) =>
+    `<rect x="${gap + i * (cell + gap) + 2}" y="5" width="${cell}" height="${cell}" fill="${CELL_OFF}"/>`,
   ).join('')
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="24" viewBox="0 0 ${w} 24">
 <style>
-.c{opacity:.18;animation:on 1.8s steps(1,end) infinite}
-@keyframes on{0%{opacity:.18}8%{opacity:1}70%{opacity:1}100%{opacity:.18}}
+.c{opacity:0;animation:on 1.8s steps(1,end) infinite}
+@keyframes on{0%{opacity:0}8%{opacity:1}70%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.c{animation:none;opacity:1}}
 </style>
 <rect x="1" y="2" width="${barW + 2}" height="16" fill="none" stroke="${ICE}" stroke-width="1.5"/>
+${off}
 ${cells}
 <path fill="${ICE}" d="${pixelPath(label, barW + 14, 5, 2)}"/>
 </svg>`
@@ -198,10 +210,10 @@ export const register: Register = on => {
       return next(e)
     }
     const { Box, Svg, Text } = $.ui.resolve(e)
-    const label = LABELS[e.props.mode] ?? 'DENKT NACH'
+    const label = LABELS[e.props.mode] ?? 'THINKING'
     return (
       <Box flexDirection="row" gap="sm" alignItems="center">
-        <Svg source={loader(label)} alt={`Lädt: ${label.toLowerCase()}`} isInteractive />
+        <Svg source={loader(label)} alt={`Loading: ${label.toLowerCase()}`} isInteractive />
         {e.props.message !== null && <Text dimColor>{e.props.message}</Text>}
       </Box>
     )
