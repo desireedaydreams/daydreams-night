@@ -13,7 +13,7 @@ const NIGHT = '#120E24'
 
 // ── Farben der App, fest im Nacht-Modus (die helle Palette bleibt ungenutzt) ────────────────────────────
 const { theme, problems } = makeColors({
-  label: 'Y2K Night',
+  label: 'Daydreams Night',
   roles: { accent: BUBBLEGUM, danger: '#E0245E', success: '#6CC21F', warning: '#E0A100', pro: '#8F7BFF' },
   light: {
     gray: {

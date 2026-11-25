@@ -1,4 +1,4 @@
-# Y2K Night
+# Daydreams Night
 
 Ein von Y2K inspiriertes Theme für Claude Code in der Desktop-App, immer im Nacht-Modus: feines Lila-Raster, ein paar vierzackige Sterne, rosa Bubbles für deine Nachrichten, ruhige Karten für die Antworten und ein Pixel-Ladebalken in Lilac und Aqua.
 
@@ -6,18 +6,18 @@ Ein von Y2K inspiriertes Theme für Claude Code in der Desktop-App, immer im Nac
 
 ## Installieren
 
-**In der Desktop-App:** neben dem Eingabefeld auf **+**, dann **Plugins**, **Add marketplace** mit `desireedaydreams/y2k-night`, danach **Add plugin**.
+**In der Desktop-App:** neben dem Eingabefeld auf **+**, dann **Plugins**, **Add marketplace** mit `desireedaydreams/daydreams-night`, danach **Add plugin**.
 
 **Im Terminal, in einer Claude-Code-Sitzung** (Nachfrage mit `y` bestätigen, dann den Bereich wählen):
 
 ```
-/plugin install y2k-night --marketplace desireedaydreams/y2k-night
+/plugin install daydreams-night --marketplace desireedaydreams/daydreams-night
 ```
 
 **Aus der Shell:**
 
 ```
-claude plugin install y2k-night --marketplace desireedaydreams/y2k-night
+claude plugin install daydreams-night --marketplace desireedaydreams/daydreams-night
 ```
 
 ## Farben
