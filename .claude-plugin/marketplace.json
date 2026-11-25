@@ -1,0 +1,5 @@
+{
+  "name": "y2k-night",
+  "owner": { "name": "desireedaydreams" },
+  "plugins": [{ "name": "y2k-night", "source": "./" }]
+}
